@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { Color } from "csstype";
 import { ref } from "vue";
 
 const nbOfSqr = ref(0);
 let isEmpty = true;
+let colorExists = ref(false);
 
 interface Color {
   r: number;
@@ -24,10 +24,14 @@ function getColor(colorToCopy : string) {
 }
 
 function saveColor() {  
-  isEmpty = false
-  savedColors.value.push(color.value);
-  console.log(savedColors.value);
-  nbOfSqr.value++
+  isEmpty = false;
+  savedColors.value.find((savedColor) => savedColor === color.value) ? colorExists.value = true : colorExists.value = false;
+  if (!colorExists.value) {
+    savedColors.value.push(color.value);
+    colorWatch.value = { r: 10, g: 10, b: 10 };
+    color.value = 'rgb(0,0,0)';
+    nbOfSqr.value++
+  }
 }
 
 function reset() {
@@ -65,15 +69,12 @@ function reset() {
         <h3>Ajouter des couleurs!</h3>
       </div>
       <div v-else id="colorContainer" >
-        <div v-for="savedColor in savedColors" :style="{backgroundColor: savedColor}" class="prevsquare" @click="getColor(($event.target as HTMLElement).style.backgroundColor)">
-
-        </div>
         <!-- colors are saved here -->
+        <div v-for="savedColor in savedColors" :style="{backgroundColor: savedColor}" class="prevsquare" @click="getColor(($event.target as HTMLElement).style.backgroundColor)">
+        </div>
       </div>
     </div>
   </section>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
